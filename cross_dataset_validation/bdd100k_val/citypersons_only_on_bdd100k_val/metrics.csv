@@ -1,0 +1,2 @@
+model_id,dataset_id,split,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,runtime_seconds,save_dir
+citypersons_only,bdd100k_val,val,0.6312764869665421,0.3702307344291962,0.46673244566681726,0.40293033690498603,0.1540920658314537,0.19026388067462055,0.6447075454998867,18.082027219099995,0.7018908970000212,214.6164632189998,/kaggle/working/bdd100k_validation/citypersons_only_on_bdd100k_val

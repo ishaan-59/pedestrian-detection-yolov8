@@ -1,0 +1,2 @@
+model_id,dataset_id,split,imgsz,batch,conf,iou_nms,max_det,precision,recall,f1,map50,map75,map50_95,runtime_seconds,preprocess_ms,inference_ms,postprocess_ms,save_dir
+caltech_to_citypersons,crowdhuman_val,val,768,16,0.001,0.7,300,0.5900440619618287,0.367889383675854,0.45320673849577,0.41291404510350305,0.14442524321370553,0.1863755606934435,145.59609322999995,0.8601058178500679,23.127391829977352,1.3128593608717378,/kaggle/working/cross_dataset_validation/crowdhuman_val/caltech_to_citypersons_on_crowdhuman_val

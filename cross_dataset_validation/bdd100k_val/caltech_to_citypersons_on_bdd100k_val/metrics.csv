@@ -1,0 +1,2 @@
+model_id,dataset_id,split,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,runtime_seconds,save_dir
+caltech_to_citypersons,bdd100k_val,val,0.6369810427268365,0.39632031367817827,0.4886251723095633,0.43140426483337424,0.16224750142298316,0.20084118126816483,0.6695975809995843,18.076115738100068,0.7223364922995414,215.87293132199989,/kaggle/working/bdd100k_validation/caltech_to_citypersons_on_bdd100k_val

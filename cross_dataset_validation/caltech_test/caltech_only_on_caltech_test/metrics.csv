@@ -1,0 +1,2 @@
+model_id,dataset_id,split,images,instances,imgsz,batch,conf,iou_nms,max_det,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,save_dir
+caltech_only,caltech_test,test,3503,3277,768,16,0.001,0.7,300,0.748344990860903,0.37686908758010373,0.5012878869977201,0.42697523737637927,0.17318375121962723,0.20686705164734337,0.9831788729652473,25.398295711676177,0.45296151241849464,/kaggle/working/cross_dataset_validation/caltech_test/caltech_only_on_caltech_test-2

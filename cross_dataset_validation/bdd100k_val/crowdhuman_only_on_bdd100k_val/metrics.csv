@@ -1,0 +1,2 @@
+model_id,dataset_id,split,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,runtime_seconds,save_dir
+crowdhuman_only,bdd100k_val,val,0.6969535320489045,0.46825516513346405,0.5601607540847817,0.4956204311547422,0.21349213469191614,0.24590103649410056,0.6724231680003641,18.04837877260036,0.7526646162000133,216.26093067099987,/kaggle/working/bdd100k_validation/crowdhuman_only_on_bdd100k_val

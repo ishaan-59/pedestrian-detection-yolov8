@@ -1,0 +1,2 @@
+model_id,dataset_id,split,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,runtime_seconds,save_dir
+caltech_only,bdd100k_val,val,0.5261699321480368,0.22779369627507162,0.3179415801886482,0.21330666855095948,0.03592916502783791,0.07751449174839556,0.6617486576999226,17.168825721599887,0.4709065348997001,207.42194025899994,/kaggle/working/bdd100k_validation/caltech_only_on_bdd100k_val

@@ -1,0 +1,2 @@
+model_id,dataset_id,split,imgsz,batch,conf,iou_nms,max_det,precision,recall,f1,map50,map75,map50_95,runtime_seconds,preprocess_ms,inference_ms,postprocess_ms,save_dir
+citypersons_only,caltech_test,test,768,16,0.001,0.7,300,0.5401862615959282,0.19102837961550198,0.2822451860982041,0.1956410981532397,0.03694092748063891,0.07363224819494295,114.22687786699998,0.9875676365977042,25.50186981358763,0.7956667367974063,/kaggle/working/cross_dataset_validation/caltech_test/citypersons_only_on_caltech_test

@@ -1,0 +1,2 @@
+model_id,dataset_id,split,imgsz,batch,conf,iou_nms,max_det,precision,recall,f1,map50,map75,map50_95,runtime_seconds,preprocess_ms,inference_ms,postprocess_ms,save_dir
+crowdhuman_to_citypersons,crowdhuman_val,val,768,16,0.001,0.7,300,0.7267783515934891,0.5733850442370622,0.6410330249495548,0.6307822309836628,0.2867063342599584,0.3192701143227972,149.48606502199982,0.8793375768885113,23.22177557734529,1.2306573878732319,/kaggle/working/cross_dataset_validation/crowdhuman_val/crowdhuman_to_citypersons_on_crowdhuman_val

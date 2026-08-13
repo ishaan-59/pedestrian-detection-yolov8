@@ -1,0 +1,2 @@
+model_id,dataset_id,split,imgsz,batch,conf,iou_nms,max_det,precision,recall,f1,map50,map75,map50_95,runtime_seconds,preprocess_ms,inference_ms,postprocess_ms,save_dir
+caltech_only,crowdhuman_val,val,768,16,0.001,0.7,300,0.5015117200579704,0.3289702258312124,0.3973173038164639,0.34003944982081513,0.07522373284139618,0.13267696078521468,157.44370565400004,0.8505955167048743,23.30775317368503,1.1394934155610137,/kaggle/working/cross_dataset_validation/crowdhuman_val/caltech_only_on_crowdhuman_val

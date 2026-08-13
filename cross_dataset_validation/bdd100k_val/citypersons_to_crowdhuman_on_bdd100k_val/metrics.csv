@@ -1,0 +1,2 @@
+model_id,dataset_id,split,precision,recall,f1,map50,map75,map50_95,preprocess_ms,inference_ms,postprocess_ms,runtime_seconds,save_dir
+citypersons_to_crowdhuman,bdd100k_val,val,0.6855186549016179,0.47330719348514555,0.5599821769334686,0.49923121203327536,0.20984849683545886,0.24499387132673656,0.6674517948001721,18.01028825170047,0.7378111001003163,215.32708718599997,/kaggle/working/bdd100k_validation/citypersons_to_crowdhuman_on_bdd100k_val

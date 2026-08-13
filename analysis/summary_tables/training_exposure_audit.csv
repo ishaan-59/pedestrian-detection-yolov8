@@ -1,0 +1,7 @@
+model_id,stage_1_dataset,stage_1_images,stage_1_epochs_run,stage_1_checkpoint_epoch,stage_2_dataset,stage_2_images,stage_2_epochs_run,stage_2_checkpoint_epoch,checkpoint_lineage_exposure,executed_training_exposure,final_dataset,imgsz,batch,optimizer,initial_lr,warmup_epochs,patience,seed,best_final_domain_map50_95,notes
+caltech_only,Caltech,26594,43,23,,,,,611662,1143542,Caltech,768,8,AdamW,0.001,3,20,42,0.2101,COCO-pretrained YOLOv8m; 11-hour limit configured; best checkpoint at epoch 23.
+citypersons_only,CityPersons,2975,133,103,,,,,306425,395675,CityPersons,768,8,AdamW,0.001,5,30,0,0.37982,Early stopped at epoch 133; best checkpoint at epoch 103.
+crowdhuman_only,CrowdHuman,15000,73,62,,,,,930000,1095000,CrowdHuman,640,32,MuSGD (auto),0.01,3,30,0,0.54282,Run ended at epoch 73 for an unverified reason; optimizer auto-selected MuSGD.
+caltech_to_citypersons,Caltech,26594,43,23,CityPersons,2975,80,69,816937,1381542,CityPersons,768,8,AdamW,0.0005,3,20,0,0.32305,"Stage 2 completed all 80 epochs; differs from CityPersons-only in initialization, LR, warmup, and patience."
+citypersons_to_crowdhuman,CityPersons,2975,133,103,CrowdHuman,15000,100,80,1506425,1895675,CrowdHuman,640,32,Auto (likely MuSGD),0.01,3,20,0,0.53902,Stage 2 completed all 100 epochs; resolved optimizer not directly verified.
+crowdhuman_to_citypersons,CrowdHuman,15000,73,62,CityPersons,2975,81,51,1081725,1335975,CityPersons,768,8,AdamW,0.0005,3,30,0,0.40618,Early stopped at epoch 81; best checkpoint at epoch 51.
