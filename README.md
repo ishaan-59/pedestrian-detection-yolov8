@@ -323,6 +323,7 @@ python -m pip install -r requirements.txt
 Exact training configurations for individual experiments are preserved alongside the corresponding models in [`models/`](models/).
 
 Model weight files and source datasets are excluded from the Git repository. Training metadata, metrics, figures, and evaluation artifacts are retained to preserve experiment provenance.
+
 ---
 
 # Data and Qualitative Video
