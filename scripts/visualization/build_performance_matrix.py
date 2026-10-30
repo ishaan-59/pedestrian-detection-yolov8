@@ -6,7 +6,7 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 VALIDATION_ROOT = PROJECT_ROOT / "cross_dataset_validation"
-OUTPUT_DIR = PROJECT_ROOT / "experiments" / "summary_tables"
+OUTPUT_DIR = PROJECT_ROOT / "analysis" / "summary_tables"
 OUTPUT_FILE = OUTPUT_DIR / "model_performance_matrix.csv"
 
 
@@ -139,5 +139,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-    

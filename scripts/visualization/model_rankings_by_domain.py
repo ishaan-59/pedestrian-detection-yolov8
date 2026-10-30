@@ -1,61 +1,61 @@
-import pandas as pd
-import matplotlib.pyplot as plt
+"""Generate model-ranking panels from the canonical performance matrix."""
+
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+from project_style import (
+    EDGE_COLOR,
+    FIGSIZE_LARGE,
+    SKY_BLUE,
+    apply_project_style,
+    save_figure,
+    style_axis,
+)
+
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+INPUT_FILE = PROJECT_ROOT / "analysis" / "summary_tables" / "model_performance_matrix.csv"
+OUTPUT_STEM = PROJECT_ROOT / "analysis" / "figures" / "model_rankings_by_domain"
 
-INPUT_FILE = (PROJECT_ROOT / "experiments" / "summary_tables" / "model_performance_matrix.csv")
-OUTPUT_FILE = (PROJECT_ROOT / "docs" / "figures" / "model_rankings_by_domain.png")
 
+def main() -> None:
+    apply_project_style()
+    dataframe = pd.read_csv(INPUT_FILE)
 
-def main():
-    df = pd.read_csv(INPUT_FILE)
-    
-    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(15, 9))
-    axes = ax.flatten()
+    figure, axes_grid = plt.subplots(nrows=2, ncols=2, figsize=FIGSIZE_LARGE)
+    axes = axes_grid.flatten()
 
-    datasets_list = df['dataset_id'].unique().tolist()
-    
-    for i, dataset_id in enumerate(datasets_list):
-        current_ax = axes[i]
+    for axis, dataset_id in zip(axes, dataframe["dataset_id"].unique()):
+        rows = dataframe[dataframe["dataset_id"] == dataset_id].copy()
+        rows = rows.sort_values("map50_95", ascending=False)
 
-        row = df[df["dataset_id"] == dataset_id].copy()
-        row = row.sort_values('map50_95', ascending=False)
+        bars = axis.barh(
+            rows["model_id"],
+            rows["map50_95"],
+            color=SKY_BLUE,
+            edgecolor=EDGE_COLOR,
+            height=0.6,
+        )
+        axis.bar_label(bars, fmt="%.3f", padding=-8, fontsize=9)
+        axis.set_title(f"{dataset_id} model comparison")
+        axis.set_xlabel("mAP50–95")
+        axis.set_ylabel("Models")
+        axis.set_xlim(0, 0.6)
+        axis.invert_yaxis()
+        style_axis(axis, grid_axis="x")
 
-        bars = current_ax.barh(row['model_id'], row['map50_95'],color='skyblue', edgecolor='black', height=0.6) 
+    figure.suptitle("Model Rankings Across Evaluation Domains")
+    figure.tight_layout(rect=[0, 0, 1, 0.96], h_pad=2.0, w_pad=2.5)
 
-        for bar in bars:
-            value = bar.get_width()
+    output_path = save_figure(figure, OUTPUT_STEM, formats=("png",))[0]
+    print(f"Saved plot to: {output_path}")
 
-            current_ax.text(
-                value - 0.01,
-                bar.get_y() + bar.get_height() / 2,
-                f"{value:.3f}",
-                va="center",
-                ha="right",
-                fontsize=9
-            )
-
-        current_ax.set_title(f"{dataset_id} model comparison")
-        current_ax.set_xlabel("mAP50-95")
-        current_ax.set_ylabel("Models")
-        current_ax.set_xlim(0, 0.6)
-        current_ax.grid(axis='x', linestyle='--', alpha=0.7)
-        current_ax.invert_yaxis()
-        current_ax.set_axisbelow(True) 
-    fig.subplots_adjust(hspace=0.38, wspace=0.40)
-    fig.suptitle("Model Rankings Across Evaluation Domains", fontsize=16)
-    fig.tight_layout()
-
-    fig.savefig(
-                OUTPUT_FILE,
-                dpi=300,
-                bbox_inches="tight",
-            )
-
-    print(f"Saved plot to: {OUTPUT_FILE}")
-    plt.show()
 
 if __name__ == "__main__":
     main()
-

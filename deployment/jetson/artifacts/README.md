@@ -5,6 +5,14 @@ configuration examples, scripts, and lightweight system metadata. Large or
 device-specific artifacts remain outside Git to keep the project inspectable
 and portable.
 
+## Reproducible Plots
+
+[`plots/`](plots/) contains the committed high-resolution PNG and SVG benchmark
+figures. They are generated from the canonical summary CSVs by
+[`../../../scripts/visualization/plot_jetson_benchmarks.py`](../../../scripts/visualization/plot_jetson_benchmarks.py)
+using the same shared Matplotlib style as the research figures. No benchmark
+measurement is manually embedded in the plotting code.
+
 ## Intentionally Excluded
 
 | Artifact class | Local experiment role | Why it is excluded |
@@ -15,7 +23,7 @@ and portable.
 | TensorRT engines | FP32, FP16, integrated-NMS, and INT8 experiments | Device/runtime-specific binaries; rebuild on the target Jetson |
 | INT8 calibration cache | Prior calibration attempt | Machine-generated cache; retained only in the local experiment backup |
 | Source and annotated videos | Qualitative and pipeline benchmarks | Large media files; source footage is credited below |
-| Prediction outputs and validation plots | Demonstration and auxiliary Mac/MPS runs | Redundant with retained research figures or unsupported as canonical Jetson evidence |
+| Generated predictions and auxiliary Mac/MPS validation plots | Demonstration and noncanonical runs | Redundant with retained research figures or unsupported as canonical Jetson evidence |
 
 Checksums and byte sizes for the primary excluded artifacts are recorded in
 [`artifact_manifest.csv`](artifact_manifest.csv). Their original paths also

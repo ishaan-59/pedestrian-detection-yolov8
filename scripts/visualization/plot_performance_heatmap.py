@@ -1,109 +1,88 @@
+"""Generate the cross-dataset mAP50–95 heatmap from the canonical matrix."""
+
 from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from project_style import FIGSIZE_SINGLE, apply_project_style, save_figure
+
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+INPUT_FILE = PROJECT_ROOT / "analysis" / "summary_tables" / "model_performance_matrix.csv"
+OUTPUT_STEM = PROJECT_ROOT / "analysis" / "figures" / "map50_95_heatmap"
 
-INPUT_FILE = (PROJECT_ROOT / "experiments" / "summary_tables" / "model_performance_matrix.csv")
-OUTPUT_FILE = (PROJECT_ROOT / "docs" / "figures" / "map50_95_heatmap.png")
+DATASET_ORDER = [
+    "caltech_test",
+    "citypersons_val",
+    "crowdhuman_val",
+    "bdd100k_val",
+]
+MODEL_ORDER = [
+    "caltech_only",
+    "caltech_to_citypersons",
+    "citypersons_only",
+    "citypersons_to_crowdhuman",
+    "crowdhuman_only",
+    "crowdhuman_to_citypersons",
+]
 
-def main():
+
+def main() -> None:
+    apply_project_style()
+
     if not INPUT_FILE.exists():
         raise FileNotFoundError(f"Performance matrix path invalid: {INPUT_FILE}")
 
-    df = pd.read_csv(INPUT_FILE)
-    columns_needed = {"model_id", "dataset_id", "map50_95"}
-    missing_columns = columns_needed - set(df.columns)
-
+    dataframe = pd.read_csv(INPUT_FILE)
+    required_columns = {"model_id", "dataset_id", "map50_95"}
+    missing_columns = required_columns - set(dataframe.columns)
     if missing_columns:
-        raise ValueError(f"Missing columns: {missing_columns}")
-    
-    heatmap_data = df.pivot(index="model_id", columns = "dataset_id", values = "map50_95")
-    
-    heatmap_data = df.pivot(
+        raise ValueError(f"Missing columns: {sorted(missing_columns)}")
+
+    heatmap_data = dataframe.pivot(
         index="model_id",
         columns="dataset_id",
         values="map50_95",
-    )
+    ).loc[MODEL_ORDER, DATASET_ORDER]
 
-    dataset_order = [
-        "caltech_test",
-        "citypersons_val",
-        "crowdhuman_val",
-        "bdd100k_val",
-    ]
+    figure, axis = plt.subplots(figsize=FIGSIZE_SINGLE)
+    image = axis.imshow(heatmap_data.values, aspect="auto", cmap="viridis")
 
-    model_order = [
-        "caltech_only",
-        "caltech_to_citypersons",
-        "citypersons_only",
-        "citypersons_to_crowdhuman",
-        "crowdhuman_only",
-        "crowdhuman_to_citypersons",
-    ]
-
-    heatmap_data = heatmap_data.loc[
-        model_order,
-        dataset_order,
-    ]
-
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    image = ax.imshow(
-        heatmap_data.values,
-        aspect="auto",
-    )
-
-    colorbar = fig.colorbar(image, ax=ax)
+    colorbar = figure.colorbar(image, ax=axis)
     colorbar.set_label("mAP50–95")
 
-    ax.set_xticks(range(len(heatmap_data.columns)))
-    ax.set_yticks(range(len(heatmap_data.index)))
+    axis.set_xticks(range(len(heatmap_data.columns)))
+    axis.set_yticks(range(len(heatmap_data.index)))
+    axis.set_xticklabels(heatmap_data.columns)
+    axis.set_yticklabels(heatmap_data.index)
+    plt.setp(axis.get_xticklabels(), rotation=30, ha="right")
 
-    ax.set_xticklabels(heatmap_data.columns)
-    ax.set_yticklabels(heatmap_data.index)
-
-    plt.setp(
-        ax.get_xticklabels(),
-        rotation=30,
-        ha="right",
-    )
-
-    threshold = heatmap_data.to_numpy().max() / 2
-
+    text_threshold = heatmap_data.to_numpy().max() / 2
     for row_index in range(len(heatmap_data.index)):
         for column_index in range(len(heatmap_data.columns)):
             value = heatmap_data.iloc[row_index, column_index]
-
-            text_color = "black" if value > threshold else "white"
-
-            ax.text(
+            axis.text(
                 column_index,
                 row_index,
                 f"{value:.3f}",
                 ha="center",
                 va="center",
-                color=text_color,
+                color="black" if value > text_threshold else "white",
             )
-            
-    ax.set_title("Cross-Dataset Pedestrian Detection Performance")
-    ax.set_xlabel("Evaluation Dataset")
-    ax.set_ylabel("Trained Model")
 
-    fig.tight_layout()
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    axis.set_title("Cross-Dataset Pedestrian Detection Performance")
+    axis.set_xlabel("Evaluation Dataset")
+    axis.set_ylabel("Trained Model")
+    figure.tight_layout()
 
-    fig.savefig(
-        OUTPUT_FILE,
-        dpi=300,
-        bbox_inches="tight",
-    )
+    output_path = save_figure(figure, OUTPUT_STEM, formats=("png",))[0]
+    print(f"Saved heatmap to: {output_path}")
 
-    print(f"Saved heatmap to: {OUTPUT_FILE}")
-
-
-    plt.show()
 
 if __name__ == "__main__":
     main()

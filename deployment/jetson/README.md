@@ -123,6 +123,11 @@ is the best operating point for every deployment.
 
 Source: [`benchmarks/summary/benchmark_matrix.csv`](benchmarks/summary/benchmark_matrix.csv).
 
+![Jetson runtime performance across model input sizes](artifacts/plots/jetson_runtime_performance_by_input.png)
+
+The left panel reports neural-network inference only; the right reports the
+observed full-validation rate. They should not be converted into one another.
+
 ## 7. Backend / Precision Accuracy Preservation
 
 | Model input | PyTorch FP32 | TensorRT FP32 | TensorRT FP16 |
@@ -156,6 +161,8 @@ Moving from 768 to 512 halves inference latency, but relative precision, recall,
 mAP50, and mAP50–95 fall by 4.9%, 13.5%, 15.0%, and 15.9%, respectively.
 The 512 engine favors latency; 768 favors detection quality; 640 is a valid
 middle point on the measured Pareto tradeoff.
+
+![Jetson accuracy-latency operating points](artifacts/plots/jetson_accuracy_latency_tradeoff.png)
 
 ## 9. Repeated Latency and Integrated NMS
 
@@ -199,6 +206,8 @@ The 15W → 25W change reduced inference latency by about 27.5%. Moving from
 rose from 13.55 W to 15.44 W. In this workload, 25W is a strong performance /
 power compromise, not a universal optimum.
 
+![Jetson power and latency tradeoff](artifacts/plots/jetson_power_mode_tradeoff.png)
+
 Telemetry aggregates use samples where `GR3D_FREQ > 20%`. Because tegrastats
 was sampled at roughly one-second intervals, its GPU-utilization values can
 alias against short inference activity. They are retained for context, not used
@@ -223,6 +232,8 @@ Unless stated otherwise, the model input remains 768.
 | 3840×2160 | no | 70.608 s | 12.520 FPS |
 | 1920×1080 | no | 51.934 s | 17.022 FPS |
 | 1280×720 | no | 47.694 s | 18.535 FPS |
+
+![Jetson video-pipeline throughput](artifacts/plots/jetson_video_pipeline_throughput.png)
 
 Source resolution materially affects the full pipeline even though the neural
 network input is fixed. Saving an annotated 4K stream is especially expensive;
@@ -317,6 +328,20 @@ portable. The integrated-NMS prediction example additionally requires a target
 engine exported with `nms=True`. The original integrated-NMS export command was
 not retained: its export log records the environment and input/output shapes,
 but not the exact CLI or all build-time confidence/NMS arguments.
+
+### Regenerating the figures
+
+From the integrated repository root, install the documented Python dependencies
+and run:
+
+```bash
+python scripts/visualization/plot_jetson_benchmarks.py
+```
+
+The script reads the canonical CSV files under `benchmarks/summary/`, validates
+their schemas, and recreates the PNG and SVG outputs in `artifacts/plots/`.
+Shared styling and the complete source-to-figure mapping are documented in
+[`../../scripts/visualization/README.md`](../../scripts/visualization/README.md).
 
 ## 14. Limitations
 

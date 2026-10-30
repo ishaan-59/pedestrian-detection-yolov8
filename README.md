@@ -266,6 +266,11 @@ reducing neural-network inference latency by **3.58×** from PyTorch FP32 to
 TensorRT FP16. Full-validation throughput improved by **2.40×**; it includes
 data loading and other pipeline overhead and is therefore not `1000 / latency`.
 
+![Jetson runtime performance across model input sizes](deployment/jetson/artifacts/plots/jetson_runtime_performance_by_input.png)
+
+The paired panels keep neural-network latency separate from measured
+full-validation throughput while using fixed runtime colors across input sizes.
+
 ### Accuracy–latency operating points
 
 | TensorRT FP16 input | Precision | Recall | mAP50–95 | Inference |
@@ -279,6 +284,8 @@ Input 512 is the latency-first point; 768 preserves more detection quality;
 Mac/MPS) and Jetson score (`0.250`/`0.251` at 768) come from different software
 and hardware environments, so deployment speedups use only matched Jetson
 baselines.
+
+![Jetson accuracy-latency operating points](deployment/jetson/artifacts/plots/jetson_accuracy_latency_tradeoff.png)
 
 ### Full-pipeline and deployment findings
 
@@ -412,6 +419,20 @@ Accuracy and generalization metrics are the primary focus of this protocol.
 Jetson measurements use batch 1 and matched backend/input-size comparisons;
 their separate protocol and evidence status are documented in
 [`deployment/jetson/`](deployment/jetson/README.md).
+
+### Figure generation
+
+After installing the environment described below, all quantitative figures can
+be generated with Python from canonical CSV files. The shared style module keeps
+research and deployment typography, colors, grids, annotations, and export
+settings consistent.
+
+```bash
+python scripts/visualization/plot_jetson_benchmarks.py
+```
+
+Research-figure commands, Jetson source mappings, and the runtime color key are
+documented in [`scripts/visualization/README.md`](scripts/visualization/README.md).
 
 ### Environments
 
