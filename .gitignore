@@ -3,3 +3,17 @@
 .DS_Store
 __pycache__/
 *.pyc
+
+# Local-only Jetson deployment assets. Documentation, CSVs, scripts, and raw
+# text logs under deployment/jetson remain tracked.
+deployment/jetson/bdd100k_val/
+deployment/jetson/models/
+deployment/jetson/media/
+deployment/jetson/outputs/
+deployment/jetson/runs/
+deployment/jetson/**/*.engine
+deployment/jetson/**/*.onnx
+deployment/jetson/**/*.cache
+deployment/jetson/**/*.cache.*
+deployment/jetson/**/*.avi
+deployment/jetson/**/*.mp4

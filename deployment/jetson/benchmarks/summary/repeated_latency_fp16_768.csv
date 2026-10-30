@@ -1,0 +1,5 @@
+stage,mean_ms,median_ms,std_ms,min_ms,max_ms
+Preprocess,8.82,8.82,0.02,8.75,8.9
+Inference,19.13,19.13,0.02,19.09,19.18
+Postprocess,3.55,3.53,0.09,3.37,3.81
+Wall time,32.19,32.17,0.1,31.99,32.53

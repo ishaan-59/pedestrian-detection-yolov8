@@ -1,28 +1,41 @@
-# Pedestrian Detection Across Domains with YOLOv8m
+# Cross-Dataset Pedestrian Detection and Edge Deployment with YOLOv8m
 
-A controlled study of how **training domain and sequential fine-tuning affect cross-domain pedestrian-detection performance** using single-class YOLOv8m detectors.
+An end-to-end pedestrian-detection study spanning **cross-domain model
+selection** and **real-device optimization on NVIDIA Jetson Orin Nano**. The
+same single-class YOLOv8m detector connects both phases.
 
-The project compares models trained on **Caltech, CityPersons, and CrowdHuman**, evaluates all training strategies across multiple pedestrian domains, and uses **BDD100K as a common external evaluation dataset**.
+| Phase | Scope | Headline result |
+|---|---|---|
+| Cross-domain research | 6 training strategies × 4 evaluation domains = 24 evaluations | CrowdHuman-only delivered the strongest overall cross-domain behavior and the best BDD100K research result (`mAP50–95=0.246`) |
+| Edge deployment | PyTorch FP32 and TensorRT FP32/FP16 at 512, 640, and 768 | At input 512, TensorRT FP16 cut inference from **34.4 ms to 9.6 ms** (**3.58× faster**) while BDD100K `mAP50–95` remained **0.211** |
 
 ## Highlights
 
-* Trained and compared **6 YOLOv8m pedestrian detectors** across single-dataset and sequential-transfer strategies.
-* Performed **24 model–dataset evaluations** across Caltech, CityPersons, CrowdHuman, and BDD100K.
-* Found strong evidence of **training-domain specialization**, particularly for the Caltech-only detector.
-* CrowdHuman-only produced the strongest overall off-domain performance among the single-dataset models and the highest result on independent BDD100K evaluation.
-* CityPersons → CrowdHuman became nearly indistinguishable from CrowdHuman-only, suggesting strong influence from the final CrowdHuman training stage.
-* CrowdHuman → CityPersons retained some CrowdHuman-associated behavior while adapting toward CityPersons, demonstrating that **transfer direction matters**.
-* Qualitative inspection showed differences in occlusion handling, distant-pedestrian detection, recall behavior, and false positives.
+- Trained and compared **6 YOLOv8m pedestrian detectors** across
+  single-dataset and sequential-transfer strategies.
+- Evaluated every model on Caltech, CityPersons, CrowdHuman, and the external
+  BDD100K domain; the resulting heatmap exposes strong domain specialization.
+- Selected CrowdHuman-only for its balanced generalization, then carried that
+  exact checkpoint into the deployment phase.
+- Benchmarked a complete **3 runtimes/precisions × 3 input sizes** matrix on an
+  8 GB Jetson Orin Nano Super, retaining raw validation evidence for every row.
+- TensorRT FP16 preserved accuracy relative to PyTorch at fixed resolution and
+  delivered **3.34×–3.59× faster neural-network inference**.
+- Measured resolution, power-mode, integrated-NMS, and video-pipeline tradeoffs;
+  retained INT8 as a documented negative result rather than a claimed win.
 
 ### Detailed Documentation
 
-* [Model inventory and training strategies](models/README.md)
-* [Cross-dataset evaluation](cross_dataset_validation/README.md)
-* [Qualitative analysis](qualitative/README.md)
+- [Model inventory and training strategies](models/README.md)
+- [Cross-dataset evaluation](cross_dataset_validation/README.md)
+- [Qualitative analysis](qualitative/README.md)
+- [Jetson deployment, benchmarks, and evidence](deployment/jetson/README.md)
 
 ---
 
-# Research Question
+## 1. Project Questions
+
+### Research question
 
 > **How does the choice of training dataset affect cross-domain performance in pedestrian detection?**
 
@@ -36,9 +49,19 @@ The experiments additionally investigate:
 6. Which training strategy generalizes most effectively to a common unseen domain.
 7. How domain shift affects precision, recall, and qualitative failure behavior.
 
+### Deployment question
+
+> **How much inference performance can TensorRT and reduced precision gain on
+> Jetson Orin Nano, and what accuracy, power, and pipeline tradeoffs accompany
+> those gains?**
+
+The deployment phase keeps model input size, source-video resolution,
+neural-network latency, and full-pipeline throughput separate so that each
+claim has a clear measurement boundary.
+
 ---
 
-# Experimental Design
+## 2. Model Training and Evaluation Design
 
 All experiments use **YOLOv8m** as a single-class pedestrian detector.
 
@@ -69,7 +92,7 @@ BDD100K was not used in any of the project training sequences and therefore serv
 
 ---
 
-# Cross-Dataset Results
+## 3. Cross-Dataset Evaluation
 
 The primary comparison metric is **mAP50–95**.
 
@@ -82,7 +105,7 @@ The primary comparison metric is **mAP50–95**.
 | **CrowdHuman only**          |        0.199 |           0.286 |      **0.563** |   **0.246** |
 | **CrowdHuman → CityPersons** |        0.080 |       **0.407** |          0.319 |       0.225 |
 
-## Cross-Dataset Performance
+### Cross-Dataset Performance
 
 ![Cross-dataset pedestrian detection performance](analysis/figures/map50_95_heatmap.png)
 
@@ -90,9 +113,9 @@ The heatmap highlights substantial domain dependence. No single training strateg
 
 ---
 
-# Key Findings
+## 4. Domain-Generalization Findings
 
-## 1. Strong In-Domain Performance Does Not Guarantee Generalization
+### 4.1 Strong In-Domain Performance Does Not Guarantee Generalization
 
 The **Caltech-only** detector achieved the highest mAP50–95 on Caltech Test:
 
@@ -109,7 +132,7 @@ Under this experimental setup, Caltech therefore provides the clearest example o
 
 ---
 
-## 2. CrowdHuman Produced the Strongest Overall Single-Dataset Generalization
+### 4.2 CrowdHuman Produced the Strongest Overall Single-Dataset Generalization
 
 The CrowdHuman-only detector achieved:
 
@@ -128,7 +151,7 @@ Dataset diversity itself was not experimentally isolated from other factors such
 
 ---
 
-## 3. CityPersons → CrowdHuman Converged Toward CrowdHuman-Only Behavior
+### 4.3 CityPersons → CrowdHuman Converged Toward CrowdHuman-Only Behavior
 
 CityPersons → CrowdHuman and CrowdHuman-only produced nearly identical results:
 
@@ -149,7 +172,7 @@ This does not establish that smaller-to-larger sequential training is ineffectiv
 
 ---
 
-## 4. Transfer Direction Matters
+### 4.4 Transfer Direction Matters
 
 The reverse training sequence behaved differently.
 
@@ -175,7 +198,7 @@ This suggests **partial retention of earlier-domain behavior alongside adaptatio
 
 ---
 
-# Qualitative Analysis
+## 5. Qualitative Comparisons
 
 Quantitative metrics describe aggregate detector behavior, but they do not always reveal **which types of pedestrian instances are being detected or missed**.
 
@@ -189,7 +212,7 @@ The selected cases include:
 * differences in apparent recall;
 * and false positives.
 
-## Occlusion Example
+### Occlusion Example
 
 ![CityPersons and CrowdHuman occlusion comparison](qualitative/selected/single_dataset/frame_22s_occlusion.png)
 
@@ -205,7 +228,7 @@ These examples are **illustrative rather than statistical evidence**. The quanti
 
 ---
 
-# Selected Model
+## 6. Model Selection
 
 The **CrowdHuman-only YOLOv8m** detector was selected as the primary model for downstream work.
 
@@ -218,11 +241,71 @@ In particular, it:
 * remained competitive on Caltech;
 * and showed qualitatively stronger handling of several difficult pedestrian cases.
 
-The selected detector was subsequently used for downstream edge-deployment and optimization experiments maintained separately from this training/generalization repository.
+The selected checkpoint was subsequently used for the integrated Jetson
+deployment and TensorRT optimization phase below.
 
 ---
 
-# Repository Structure
+## 7. Edge Deployment and TensorRT Optimization
+
+Deployment was measured on an **NVIDIA Jetson Orin Nano Super Developer Kit
+(8 GB)** using JetPack 6.2.1, CUDA 12.6, batch 1, and the BDD100K validation
+set. The canonical matrix compares PyTorch FP32, TensorRT FP32, and TensorRT
+FP16 at model inputs 512, 640, and 768.
+
+### Matched 512-pixel result
+
+| Runtime | Precision | Inference | mAP50–95 | Full-validation throughput |
+|---|---|---:|---:|---:|
+| PyTorch | FP32 | 34.4 ms | 0.211 | 23.2 images/s |
+| TensorRT | FP32 | 18.7 ms | 0.211 | 36.9 images/s |
+| TensorRT | FP16 | **9.6 ms** | **0.211** | **55.7 images/s** |
+
+At a fixed input size, TensorRT acceleration preserved measured accuracy while
+reducing neural-network inference latency by **3.58×** from PyTorch FP32 to
+TensorRT FP16. Full-validation throughput improved by **2.40×**; it includes
+data loading and other pipeline overhead and is therefore not `1000 / latency`.
+
+### Accuracy–latency operating points
+
+| TensorRT FP16 input | Precision | Recall | mAP50–95 | Inference |
+|---:|---:|---:|---:|---:|
+| 768 | 0.700 | 0.467 | **0.251** | 19.2 ms |
+| 640 | 0.674 | 0.453 | 0.238 | 14.9 ms |
+| 512 | 0.666 | 0.404 | 0.211 | **9.6 ms** |
+
+Input 512 is the latency-first point; 768 preserves more detection quality;
+640 is a measured middle ground. The research-phase BDD100K score (`0.246` on
+Mac/MPS) and Jetson score (`0.250`/`0.251` at 768) come from different software
+and hardware environments, so deployment speedups use only matched Jetson
+baselines.
+
+### Full-pipeline and deployment findings
+
+| Source-video configuration (`imgsz=768`) | End-to-end throughput |
+|---|---:|
+| 4K, save annotated video | 2.095 FPS |
+| 4K, no output save | 12.520 FPS |
+| 1080p, no output save | 17.022 FPS |
+| 720p, no output save | 18.535 FPS |
+
+- The neural-network input remained 768 in this video sweep; changing source
+  resolution affected decode, resize, drawing, and encoding overhead.
+- At FP16/768, the 25W mode reduced inference to 20.6 ms versus 28.4 ms at 15W;
+  MAXN_SUPER reached 19.3 ms but raised average sampled board power from 13.55 W
+  to 15.44 W relative to 25W.
+- Integrated TensorRT NMS reduced repeated-run postprocessing but produced lower
+  recorded accuracy, so it is not the canonical accuracy engine.
+- The retained INT8 experiment was both slower and less accurate than FP16 at
+  768 (22.0 ms and 0.167 mAP50–95); it is documented as a negative result.
+
+The full matrix, hardware/software inventory, Docker workflow, power analysis,
+video protocol, raw-evidence status, limitations, and excluded-artifact manifest
+are in the [Jetson deployment report](deployment/jetson/README.md).
+
+---
+
+## 8. Repository Structure
 
 ```text
 pedestrian-detection-yolov8/
@@ -246,6 +329,15 @@ pedestrian-detection-yolov8/
 │   ├── citypersons_val/
 │   ├── crowdhuman_val/
 │   └── bdd100k_val/
+│
+├── deployment/
+│   └── jetson/
+│       ├── README.md
+│       ├── benchmarks/
+│       ├── logs/
+│       ├── scripts/
+│       ├── configs/
+│       └── artifacts/
 │
 ├── qualitative/
 │   ├── README.md
@@ -280,9 +372,19 @@ Contains common source frames, unedited model predictions, curated comparisons, 
 
 Contains derived summary tables and the visualizations used to compare model performance across domains.
 
+### `deployment/jetson/`
+
+Contains the detailed Jetson report, benchmark summary tables, canonical raw
+validation logs, power/video diagnostics, export logs, reproducibility scripts,
+portable configuration, and a manifest for intentionally excluded artifacts.
+
+[Jetson deployment report →](deployment/jetson/README.md)
+
 ---
 
-# Evaluation Protocol
+## 9. Reproducibility
+
+### Cross-domain evaluation protocol
 
 Cross-dataset evaluations were performed using:
 
@@ -296,21 +398,22 @@ Cross-dataset evaluations were performed using:
 
 Recorded metrics include:
 
-* Precision
-* Recall
-* F1
-* mAP50
-* mAP75
-* mAP50–95
-* Preprocessing time
-* Inference time
-* Postprocessing time
+- Precision
+- Recall
+- F1
+- mAP50
+- mAP75
+- mAP50–95
+- Preprocessing time
+- Inference time
+- Postprocessing time
 
-For this study, accuracy and generalization metrics are the primary focus. Hardware-specific deployment performance is evaluated separately.
+Accuracy and generalization metrics are the primary focus of this protocol.
+Jetson measurements use batch 1 and matched backend/input-size comparisons;
+their separate protocol and evidence status are documented in
+[`deployment/jetson/`](deployment/jetson/README.md).
 
----
-
-# Environment
+### Environments
 
 Install the Python dependencies used by the included analysis and model workflows:
 
@@ -322,49 +425,66 @@ python -m pip install -r requirements.txt
 
 Exact training configurations for individual experiments are preserved alongside the corresponding models in [`models/`](models/).
 
-Model weight files and source datasets are excluded from the Git repository. Training metadata, metrics, figures, and evaluation artifacts are retained to preserve experiment provenance.
+Jetson package versions, power state, unresolved TensorRT-version boundaries,
+and representative deployment commands are preserved in the
+[deployment report](deployment/jetson/README.md#3-hardware-and-software).
 
----
+Model weights, source datasets, TensorRT engines, and media are excluded from
+Git. Training metadata, metrics, figures, validation logs, checksums, and
+lightweight evaluation artifacts are retained to preserve provenance.
 
-# Data and Qualitative Video
+### Data and media attribution
 
 The project uses pedestrian data from:
 
-* Caltech Pedestrian Dataset
-* CityPersons
-* CrowdHuman
-* BDD100K
+- Caltech Pedestrian Dataset
+- CityPersons
+- CrowdHuman
+- BDD100K
 
 The qualitative comparison uses an external urban street video from Pexels:
 
 [**People and Vehicles on the Streets during Daytime**](https://www.pexels.com/video/people-and-vehicles-on-the-streets-during-daytime-2954065/)
+by **George Morina**, via Pexels under the [Pexels
+License](https://www.pexels.com/license/).
 
-The Pexels footage was used only for qualitative inspection and was not part of the project training or quantitative evaluation datasets.
+The Pexels footage was used for qualitative inspection and Jetson
+video-pipeline benchmarking. It was not part of model training or BDD100K
+accuracy evaluation.
 
 ---
 
-# Limitations
+## 10. Limitations
 
 The conclusions in this repository are specific to:
 
-* YOLOv8m;
-* the preprocessing used in this project;
-* the chosen training configuration;
-* the selected dataset splits;
-* the six training strategies evaluated;
-* and the reported evaluation protocol.
+- YOLOv8m;
+- the preprocessing used in this project;
+- the chosen training configuration;
+- the selected dataset splits;
+- the six training strategies evaluated;
+- the Jetson/software configuration and operating modes measured;
+- and the reported evaluation protocols.
 
 The experiments do not establish universal conclusions about transfer learning or pedestrian-detection datasets.
 
 In particular:
 
-* dataset scale, annotation style, scene composition, and pedestrian density differ between datasets and were not independently controlled;
-* the CityPersons → CrowdHuman result should be interpreted as CrowdHuman dominating the earlier training stage **under this setup**, not as proof that sequential training cannot help in other configurations;
-* qualitative examples are deliberately selected to illustrate observed behaviors and should not be treated as statistical evidence.
+- dataset scale, annotation style, scene composition, and pedestrian density differ between datasets and were not independently controlled;
+- the CityPersons → CrowdHuman result should be interpreted as CrowdHuman dominating the earlier training stage **under this setup**, not as proof that sequential training cannot help in other configurations;
+- qualitative examples are deliberately selected to illustrate observed behaviors and should not be treated as statistical evidence;
+- TensorRT timing and plan files are device/runtime-specific, and the retained
+  host inventory and export environment report different TensorRT versions;
+- integrated-NMS accuracy and several secondary timing rows survive only as
+  summary records, not complete raw console captures;
+- video throughput comes from one 884-frame scene and should not be generalized
+  to arbitrary cameras, codecs, storage, or output settings;
+- INT8 did not improve this deployment: the retained engine was slower and less
+  accurate than FP16, while three fresh-calibration rebuilds failed with OOM.
 
 ---
 
-# Project Summary
+## 11. Conclusions
 
 The experiments demonstrate that **pedestrian-detection generalization is strongly dependent on training domain**.
 
@@ -372,9 +492,15 @@ CrowdHuman-based training produced the strongest overall cross-domain behavior i
 
 Together, the results emphasize that selecting a pedestrian-detection training strategy requires considering **where a detector will ultimately be deployed**, rather than relying on in-domain validation performance alone.
 
-# References and Resources
+The deployment phase turns that selection into a measured edge system. At a
+fixed 512-pixel input, TensorRT FP16 preserved `mAP50–95=0.211` while reducing
+inference latency from 34.4 ms to 9.6 ms. The wider experiments show why a
+single FPS headline is insufficient: model input, source resolution, output
+encoding, power mode, NMS placement, and precision all shape the final result.
 
-## Datasets and Benchmarks
+## References and Resources
+
+### Datasets and Benchmarks
 
 1. **Caltech Pedestrian Dataset**  
    P. Dollár, C. Wojek, B. Schiele, and P. Perona,  
@@ -421,7 +547,7 @@ Together, the results emphasize that selecting a pedestrian-detection training s
 
 ---
 
-## Model and Framework
+### Model and Framework
 
 7. **Ultralytics YOLOv8**  
    G. Jocher, A. Chaurasia, and J. Qiu,  
@@ -436,17 +562,20 @@ Together, the results emphasize that selecting a pedestrian-detection training s
 
 ---
 
-## Source Video
+### Source Video
 
-The qualitative analysis uses an external urban street video from Pexels:
+The qualitative and Jetson video-pipeline analyses use external urban street
+footage from Pexels:
 
 [People and Vehicles on the Streets during Daytime](https://www.pexels.com/video/people-and-vehicles-on-the-streets-during-daytime-2954065/)
+by **George Morina**, via Pexels under the [Pexels
+License](https://www.pexels.com/license/).
 
-The video was used only for qualitative model inspection and was not part of the project training or evaluation datasets.
+The video was not part of model training or BDD100K accuracy evaluation.
 
 ---
 
-## License
+### License
 
 This project's original code is released under the [MIT License](LICENSE).
 Third-party datasets, pretrained models, and media remain subject to their

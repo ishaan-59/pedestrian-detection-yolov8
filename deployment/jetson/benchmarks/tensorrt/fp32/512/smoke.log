@@ -1,0 +1,15 @@
+Creating new Ultralytics Settings v0.0.6 file ✅ 
+View Ultralytics Settings with 'yolo settings' or at '/root/.config/Ultralytics/settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+Ultralytics 8.4.108 🚀 Python-3.10.12 torch-2.10.0 CUDA:0 (Orin, 7620MiB)
+Loading models/tensorrt/fp32/crowdhuman_512_fp32.engine for TensorRT inference...
+[08/08/2026-11:59:32] [TRT] [I] Loaded engine size: 100 MiB
+[08/08/2026-11:59:32] [TRT] [I] [MemUsageChange] TensorRT-managed allocation in IExecutionContext creation: CPU +0, GPU +37, now: CPU 0, GPU 135 (MiB)
+Setting batch=1 input of shape (1, 3, 512, 512)
+[34m[1mval: [0mFast image access ✅ (ping: 0.1±0.1 ms, read: 386.7±177.7 MB/s, size: 55.5 KB)
+[K[34m[1mval: [0mScanning /data/pedestrian_detection/bdd100k_val/labels/val... 20 images, 11 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 20/20 719.1it/s 0.0s
+WARNING ⚠️ [34m[1mval: [0mCache directory /data/pedestrian_detection/bdd100k_val/labels is not writable, cache not saved.
+[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 20% ━━────────── 4/20 10.8it/s 0.1s<1.5s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 25% ━━━───────── 5/20 7.8it/s 1.5s<1.9s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 45% ━━━━━─────── 9/20 16.5it/s 1.6s<0.7s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 65% ━━━━━━━╸──── 13/20 22.0it/s 1.7s<0.3s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 85% ━━━━━━━━━━── 17/20 26.4it/s 1.8s<0.1s[K                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 20/20 10.5it/s 1.9s
+                   all         20         47      0.944      0.489       0.58      0.325
+Speed: 1.3ms preprocess, 18.7ms inference, 0.0ms loss, 3.1ms postprocess per image
+💡 Learn more at https://docs.ultralytics.com/modes/val

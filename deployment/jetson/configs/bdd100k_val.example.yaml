@@ -1,0 +1,8 @@
+# Validation-only example. Update this path to the BDD100K export on the target
+# system; `train` mirrors `val` only to keep the dataset schema non-null.
+path: /data/pedestrian_detection/bdd100k_val
+train: images/val
+val: images/val
+
+names:
+  0: person

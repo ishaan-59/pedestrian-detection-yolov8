@@ -1,0 +1,8 @@
+# Retained Jetson captures include terminal-rendered trailing spaces, CRLF CSV
+# records, and fixed-width system tables. Preserve those source bytes while
+# excluding capture-format whitespace from patch hygiene checks.
+deployment/jetson/**/*.log -text whitespace=-blank-at-eol,-blank-at-eof
+deployment/jetson/benchmarks/summary/*.csv -text whitespace=-blank-at-eol,-blank-at-eof
+deployment/jetson/logs/system/*.txt -text whitespace=-blank-at-eol,-blank-at-eof
+deployment/jetson/jetson_system_info.txt -text whitespace=-blank-at-eol,-blank-at-eof
+deployment/jetson/scripts/*.py whitespace=-blank-at-eof

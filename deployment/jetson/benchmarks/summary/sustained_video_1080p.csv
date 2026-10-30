@@ -1,0 +1,2 @@
+source_resolution,imgsz,precision,nms_mode,confidence,frames,wall_seconds,end_to_end_fps,power_thermal_log
+1920x1080,768,FP16,integrated_tensorrt,0.25,884,51.716,17.093356021347358,not_recorded

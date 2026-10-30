@@ -1,0 +1,3 @@
+role,engine,nms_mode,precision,recall,map50,map50_95,inference_ms,postprocess_ms,wall_ms,purpose
+validation,models/tensorrt/fp16/crowdhuman_768_fp16.engine,external_ultralytics,0.7,0.467,0.499,0.251,19.13,3.55,32.19,Official accuracy/regression evaluation
+deployment,models/tensorrt/fp16_nms/crowdhuman_768_fp16_nms.engine,integrated_tensorrt,0.7,0.467,0.448,0.233,19.72,1.19,30.42,Deployment/video experiment; mAP not used as official accuracy
